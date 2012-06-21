@@ -4,9 +4,25 @@
 *.o
 
 # Compiled Dynamic libraries
-*.so
+*.so*
 
 # Compiled Static libraries
 *.lai
 *.la
 *.a
+
+# Qt
+moc_*
+*.pro.user*
+*.autosave
+
+# System
+Makefile
+.directory
+*~
+
+# Project
+bin/
+doc/
+build/
+
