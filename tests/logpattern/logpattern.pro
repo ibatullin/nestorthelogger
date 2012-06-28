@@ -18,5 +18,4 @@ TEMPLATE = app
 SOURCES += tst_logpatterntest.cpp
 DEFINES += SRCDIR=\\\"$$PWD/\\\"
 
-INCLUDEPATH += ../../src
-LIBS += -L../../lib -llogger
+include(../tests.pri)
