@@ -1,17 +1,22 @@
 #ifndef LOGPATTERN_H
 #define LOGPATTERN_H
 
-#include <QObject>
+#include <QString>
+#include "logmessage.h"
 
-class LogPattern : public QObject
+class LogPattern
 {
-    Q_OBJECT
 public:
-    explicit LogPattern(QObject *parent = 0);
+    LogPattern();
+    virtual ~LogPattern();
+    void setName(const QString &name);
+    QString name() const;
     void setPattern(const QString &pattern);
-    QString replace(const QString &senderName, const QString &message, const QString &type);
+    QString pattern() const;
+    QString replace(LogMessage message);
 
 private:
+    QString m_name;
     QString m_pattern;
 };
 
