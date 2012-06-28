@@ -12,7 +12,8 @@ SOURCES += \
     consoleappender.cpp \
     logconfigreader.cpp \
     logmanager.cpp \
-    logcategory.cpp
+    logcategory.cpp \
+    logger.cpp
 
 HEADERS += \
     logpattern.h \
@@ -22,7 +23,9 @@ HEADERS += \
     logconfigreader.h \
     logmanager.h \
     logmanager_p.h \
-    logcategory.h
+    logcategory.h \
+    logger.h \
+    logger_p.h
 
 
 VER_MAJ = 1
