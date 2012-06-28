@@ -6,10 +6,12 @@ TEMPLATE = lib
 CONFIG += dll
 
 SOURCES += \
-    logpattern.cpp
+    logpattern.cpp \
+    logmessage.cpp
 
 HEADERS += \
-    logpattern.h
+    logpattern.h \
+    logmessage.h
 
 
 VER_MAJ = 1
