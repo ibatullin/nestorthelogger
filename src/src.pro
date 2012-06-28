@@ -7,11 +7,15 @@ CONFIG += dll
 
 SOURCES += \
     logpattern.cpp \
-    logmessage.cpp
+    logmessage.cpp \
+    abstractappender.cpp \
+    consoleappender.cpp
 
 HEADERS += \
     logpattern.h \
-    logmessage.h
+    logmessage.h \
+    abstractappender.h \
+    consoleappender.h
 
 
 VER_MAJ = 1
