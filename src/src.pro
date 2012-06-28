@@ -9,13 +9,15 @@ SOURCES += \
     logpattern.cpp \
     logmessage.cpp \
     abstractappender.cpp \
-    consoleappender.cpp
+    consoleappender.cpp \
+    logconfigreader.cpp
 
 HEADERS += \
     logpattern.h \
     logmessage.h \
     abstractappender.h \
-    consoleappender.h
+    consoleappender.h \
+    logconfigreader.h
 
 
 VER_MAJ = 1
