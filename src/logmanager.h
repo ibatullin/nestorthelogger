@@ -29,7 +29,12 @@ public:
     void enableMessageHandler();
     void disableMessageHandler();
     static LogManager *instance();
+
+#if QT_VERSION >= 0x050000
     static void logMessageHandler(QtMsgType type, const QMessageLogContext &context, const QString &text);
+#else
+    static void logMessageHandler(QtMsgType type, const char *text);
+#endif
 
 private:
     const QScopedPointer<LogManagerPrivate> d_ptr;

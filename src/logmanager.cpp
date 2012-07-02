@@ -87,14 +87,22 @@ void LogManager::write(LogMessage message)
 void LogManager::enableMessageHandler()
 {
     qDebug() << "Message handler defined. All debug messages will prints out to LogManager.";
+#if QT_VERSION >= 0x050000
     qInstallMessageHandler(logMessageHandler);
+#else
+    qInstallMsgHandler(logMessageHandler);
+#endif
 }
 
 
 void LogManager::disableMessageHandler()
 {
     qDebug() << "Message handler restored.";
-    qInstallMessageHandler((QtMessageHandler)0);
+#if QT_VERSION >= 0x050000
+    qInstallMessageHandler(logMessageHandler);
+#else
+    qInstallMsgHandler(0);
+#endif
 }
 
 LogManager *LogManager::instance()
@@ -104,7 +112,7 @@ LogManager *LogManager::instance()
     return self;
 }
 
-
+#if QT_VERSION >= 0x050000
 void LogManager::logMessageHandler(QtMsgType type, const QMessageLogContext &context, const QString &text)
 {
     LogMessage message;
@@ -116,6 +124,16 @@ void LogManager::logMessageHandler(QtMsgType type, const QMessageLogContext &con
     message.setText(text);
     LogManager::instance()->write(message);
 }
+#else
+void LogManager::logMessageHandler(QtMsgType type, const char *text)
+{
+    LogMessage message;
+    message.setCategoryName("default");
+    message.setLevel(type);
+    message.setText(text);
+    LogManager::instance()->write(message);
+}
+#endif
 
 
 /*

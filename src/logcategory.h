@@ -2,6 +2,7 @@
 #define LOGCATEGORY_H
 
 #include <QObject>
+#include <QHash>
 #include "logmessage.h"
 
 class AbstractAppender;
