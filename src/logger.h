@@ -8,8 +8,8 @@ class LoggerPrivate;
 class Logger : public QObject
 {
 public:
-    Logger(QObject *senderObject, const QString &categoryName);
-    Logger(const QString &senderName, const QString &categoryName);
+    Logger(QObject *senderObject, const QString &categoryName = QString("default"));
+    Logger(const QString &senderName, const QString &categoryName = QString("default"));
     virtual ~Logger();
     void write(const QString &text);
 
