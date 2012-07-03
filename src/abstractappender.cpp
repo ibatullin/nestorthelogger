@@ -34,11 +34,18 @@ QSharedPointer<LogPattern> AbstractAppender::pattern() const
 
 bool AbstractAppender::open()
 {
+    m_open = true;
     return true;
 }
 
 void AbstractAppender::close()
 {
+    m_open = false;
+}
+
+bool AbstractAppender::isOpen() const
+{
+    return m_open;
 }
 
 void AbstractAppender::write(LogMessage message)

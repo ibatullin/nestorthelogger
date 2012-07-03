@@ -15,7 +15,6 @@ public:
     FileAppender(const QString &dirPath, QObject *parent = 0);
     bool open();
     void close();
-    void setFileName(const QString &fileName);
     void setLogDirectory(const QString &dirPath);
     void setFileNameFormat(const QString &format);
     QString getFileNameFormat() const;
@@ -28,8 +27,8 @@ private:
     QString getLogFileName() const;
 
     QDir dir;
-    QString fileName;
     QTextStream stream;
+    QFile file;
     QString fileNameFormat;
     QMutex mutex;
 };

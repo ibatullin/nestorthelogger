@@ -18,6 +18,7 @@ public:
     QSharedPointer<LogPattern> pattern() const;
     virtual bool open();
     virtual void close();
+    bool isOpen() const;
     void write(LogMessage message);
     void write(const QString &data);
 
@@ -28,6 +29,7 @@ private:
     QMutex mutex;
     QString m_name;
     QSharedPointer<LogPattern> m_pattern;
+    bool m_open;
 };
 
 #endif // ABSTRACTAPPENDER_H

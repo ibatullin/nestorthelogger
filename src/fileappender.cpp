@@ -6,45 +6,45 @@ FileAppender::FileAppender(const QString &dirPath, QObject *parent) :
     AbstractAppender(parent)
 {
     setLogDirectory(dirPath);
-    setFileNameFormat("yyyy-MM-dd");
+    setFileNameFormat("yyyy-MM-dd.log");
 }
 
 FileAppender::FileAppender(QObject *parent) :
     AbstractAppender(parent)
 {
     setLogDirectory(".");
-    setFileNameFormat("yyyy-MM-dd");
+    setFileNameFormat("yyyy-MM-dd.log");
 }
 
 bool FileAppender::open()
 {
-    qDebug() << dir.absolutePath();
+    file.setFileName(QString("%1/%2")
+                      .arg(dir.absolutePath()).arg(getLogFileName()));
 
-    QScopedPointer<QFile> file(new QFile);
-    file->setFileName(QString("%1/%2").arg(dir.absolutePath()).arg(getLogFileName()));
-    if (!file->open(QFile::Append)) {
-        qDebug() << "Can't open log file " << file->fileName();
+    QFileInfo info(file);
+    qDebug() << "Open " << info.absoluteFilePath();
+
+    if (!file.open(QFile::Append)) {
+        qDebug() << "Can't open log file " << file.fileName();
         return false;
     }
 
-    stream.setDevice(file.take());
+    stream.setDevice(&file);
+    AbstractAppender::open();
     return true;
 }
 
 void FileAppender::close()
 {
     stream.flush();
+    file.close();
+    AbstractAppender::close();
 }
 
 void FileAppender::writeData(const QString &data)
 {
     stream << data;
     stream.flush();
-}
-
-void FileAppender::setFileName(const QString &fileName)
-{
-    this->fileName = fileName;
 }
 
 void FileAppender::setFileNameFormat(const QString &format)
@@ -70,9 +70,20 @@ void FileAppender::setLogDirectory(const QString &dirPath)
 
 QString FileAppender::getLogFileName() const
 {
-    QString logFileName;
-    logFileName += QDate::currentDate().toString(fileNameFormat);
-    logFileName += ".log";
+    QString logFileName = fileNameFormat;
+    QString datePattern = "%d{";
+    int datePatternSize = datePattern.size();
+
+    int startPos = logFileName.indexOf(datePattern);
+    int endPos = logFileName.indexOf("}", startPos + 1);
+    if (startPos == -1 && endPos == -1)
+        return logFileName;
+
+    QString format = logFileName.mid(startPos + datePatternSize, endPos - startPos - datePatternSize);
+    logFileName.remove(endPos, 1);
+    logFileName.remove(startPos, datePatternSize);
+    QString dateTime = QDateTime::currentDateTime().toString(format);
+    logFileName = logFileName.replace(format, dateTime);
     return logFileName;
 }
 

@@ -20,7 +20,11 @@ QString LogCategory::name() const
 
 void LogCategory::setDefaultAppender(QSharedPointer<AbstractAppender> appender)
 {
-    m_defaultAppender = appender;
+    if (appender) {
+        if (!appender->isOpen())
+            appender->open();
+        m_defaultAppender = appender;
+    }
 }
 
 QSharedPointer<AbstractAppender> LogCategory::defaultAppender() const
@@ -31,8 +35,11 @@ QSharedPointer<AbstractAppender> LogCategory::defaultAppender() const
 void LogCategory::addAppender(QSharedPointer<AbstractAppender> appender,
                               LogMessage::MessageLevel level)
 {
-    if (appender)
+    if (appender) {
+        if (!appender->isOpen())
+            appender->open();
         appenders[level] << appender;
+    }
 }
 
 void LogCategory::write(LogMessage message)
