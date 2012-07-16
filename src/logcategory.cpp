@@ -45,7 +45,11 @@ void LogCategory::addAppender(QSharedPointer<AbstractAppender> appender,
 void LogCategory::write(LogMessage message)
 {
     if (appenders.contains(message.level())) {
+#ifdef C11
         for (QSharedPointer<AbstractAppender> appender : appenders[message.level()]) {
+#else
+        foreach (QSharedPointer<AbstractAppender> appender, appenders[message.level()]) {
+#endif
             appender->write(message);
         }
     } else {

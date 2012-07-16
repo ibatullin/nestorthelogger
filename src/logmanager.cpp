@@ -77,7 +77,11 @@ QSharedPointer<AbstractAppender> LogManager::defaultAppender() const
 void LogManager::write(LogMessage message)
 {
     Q_D(LogManager);
+#ifdef C11
     auto log = d->findCategory(message.categoryName());
+#else
+    QSharedPointer<LogCategory> log = d->findCategory(message.categoryName());
+#endif
     if (!log)
         log = d->findCategory("default");
     if (log)
@@ -166,7 +170,11 @@ bool LogManagerPrivate::reportError(const QString &errorString)
 
 QSharedPointer<LogCategory> LogManagerPrivate::findCategory(const QString &categoryName) const
 {
+#ifdef C11
     for (auto category : categories)
+#else
+    foreach (QSharedPointer<LogCategory> category, categories)
+#endif
         if (category->name() == categoryName)
             return category;
     return QSharedPointer<LogCategory>();
@@ -174,7 +182,11 @@ QSharedPointer<LogCategory> LogManagerPrivate::findCategory(const QString &categ
 
 void LogManagerPrivate::deleteCategory(const QString &categoryName)
 {
+#ifdef C11
     for (auto it = categories.begin(); it != categories.end(); ++it)
+#else
+    for (QList<QSharedPointer<LogCategory> >::iterator it = categories.begin(); it != categories.end(); ++it)
+#endif
         if ((*it)->name() == categoryName)
             categories.erase(it);
 }

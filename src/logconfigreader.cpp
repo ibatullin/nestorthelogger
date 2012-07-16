@@ -149,7 +149,11 @@ void LogConfigReader::readLevel(QDomElement &logElement,
 
 QSharedPointer<LogPattern> LogConfigReader::findPattern(const QString &patternName) const
 {
+#ifdef C11
     for (auto pattern : patterns)
+#else
+    foreach (QSharedPointer<LogPattern> pattern, patterns)
+#endif
         if (pattern->name() == patternName)
             return pattern;
     return QSharedPointer<LogPattern>();
@@ -157,8 +161,12 @@ QSharedPointer<LogPattern> LogConfigReader::findPattern(const QString &patternNa
 
 QSharedPointer<AbstractAppender> LogConfigReader::findAppender(const QString &appenderName) const
 {
+#ifdef C11
     for (auto appender : appenders)
-        if (appender->name() == appenderName)
+#else
+    foreach (QSharedPointer<AbstractAppender> appender, appenders)
+#endif
+    if (appender->name() == appenderName)
             return appender;
     return QSharedPointer<AbstractAppender>();
 }

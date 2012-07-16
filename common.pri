@@ -1,5 +1,6 @@
 DESTDIR = bin
 
+DEFINES += C11
 QMAKE_CXXFLAGS += -std=c++0x
 
 SOURCE_TREE = $$PWD
