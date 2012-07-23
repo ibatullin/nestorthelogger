@@ -14,7 +14,7 @@ public:
     void write(const QString &text);
 
     template<class T>
-    inline const Logger &operator<<(T t)
+    inline Logger &operator<<(T t)
     {
         QVariant v(t);
         write(v.toString());
