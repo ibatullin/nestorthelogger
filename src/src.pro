@@ -1,4 +1,4 @@
-TARGET = logger
+TARGET = nestorthelogger
 
 QT += xml
 

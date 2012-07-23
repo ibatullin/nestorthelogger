@@ -1,6 +1,6 @@
 INCLUDEPATH *= $$PWD/src
 DEPENDPATH *= $$PWD
-LIBS *= -llogger
+LIBS *= -L$$PWD/bin/lib -lnestorthelogger
 
 
 
