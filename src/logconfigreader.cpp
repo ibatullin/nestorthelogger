@@ -18,7 +18,6 @@ LogConfigReader::~LogConfigReader()
 
 bool LogConfigReader::read(const QString &fileName)
 {
-    LogManager *logManager = LogManager::instance();
     QDomDocument doc;
     QFile file;
     file.setFileName(fileName);
@@ -33,32 +32,43 @@ bool LogConfigReader::read(const QString &fileName)
     }
     file.close();
 
-    QDomElement rootElement = doc.documentElement();
+    rootElement = doc.documentElement();
     if (rootElement.tagName() != "logconfig")
         return reportError(QObject::tr("<logconfig> not found"));
 
     if (rootElement.attribute("version") != "1.0")
         return reportError("Wrong config version");
 
+    readPatterns();
+    if (patterns.isEmpty())
+        return reportError(QObject::tr("Patterns not defined"));
+
+    readAppenders();
+    readCategories();
+
+    return true;
+}
+
+void LogConfigReader::readPatterns()
+{
     QDomElement patternsElement = rootElement.firstChildElement("patterns");
     QDomElement p = patternsElement.firstChildElement("pattern");
     while (!p.isNull()) {
-        QSharedPointer<LogPattern> pattern = QSharedPointer<LogPattern>(new LogPattern);
         QString name = p.attribute("name");
-        QString patternString = p.text();
-        patternString = patternString.trimmed();
         if (name.isEmpty())
             continue;
+        QString patternString = p.text();
+        patternString = patternString.trimmed();
+        QSharedPointer<LogPattern> pattern(new LogPattern);
         pattern->setName(name);
         pattern->setPattern(patternString);
         patterns << pattern;
         p = p.nextSiblingElement();
     }
+}
 
-    if (patterns.isEmpty())
-        return reportError(QObject::tr("Patterns not defined"));
-
-    //Appenders
+void LogConfigReader::readAppenders()
+{
     QDomElement appendersElement = rootElement.firstChildElement("appenders");
     QDomElement a = appendersElement.firstChildElement();
     while (!a.isNull()) {
@@ -67,15 +77,17 @@ bool LogConfigReader::read(const QString &fileName)
             appender = readFileAppender(a);
         else if (a.tagName() == "consoleAppender")
             appender = readConsoleAppender(a);
-        else
-            return reportError(QObject::tr("Unknown appender"));
+
+        if (!appender) {
+            warn(QObject::tr("Unknown appender type"));
+            continue;
+        }
 
         QString name = a.attribute("name");
         QString patternName = a.attribute("pattern");
         QSharedPointer<LogPattern> pattern = findPattern(patternName);
-        if (!pattern) {
+        if (!pattern)
             continue;
-        }
 
         if (appender) {
             appender->setName(name);
@@ -84,14 +96,18 @@ bool LogConfigReader::read(const QString &fileName)
         }
         a = a.nextSiblingElement();
     }
+}
 
-    //logCategory
+void LogConfigReader::readCategories()
+{
     QDomElement logElement = rootElement.firstChildElement("categories");
     QDomElement c = logElement.firstChildElement("category");
+    LogManager *logManager = LogManager::instance();
     while (!c.isNull()) {
         QString name = c.attribute("name");
         if (name.isEmpty())
             continue;
+
         QSharedPointer<LogCategory> logCategory = QSharedPointer<LogCategory>(new LogCategory(name));
 
         readLevel(c, "warning", LogMessage::WarningLevel, logCategory);
@@ -114,21 +130,35 @@ bool LogConfigReader::read(const QString &fileName)
 
         c = c.nextSiblingElement();
     }
-
-    return true;
 }
 
 QSharedPointer<AbstractAppender> LogConfigReader::readFileAppender(QDomElement &fileAppenderElement)
 {
     Q_UNUSED(fileAppenderElement);
-    return QSharedPointer<FileAppender>(new FileAppender);
+    QSharedPointer<FileAppender> fileAppender(new FileAppender);
+    QDomElement e = fileAppenderElement.firstChildElement();
+    while (!e.isNull()) {
+        if (e.tagName() == "dir") {
+            fileAppender->setLogDirectory(e.text());
+        } else if (e.tagName() == "fileName") {
+            fileAppender->setFileNameFormat(e.text());
+        } else if (e.tagName() == "clearAfter") {
+            bool ok;
+            int days = e.text().toInt(&ok);
+
+            if (ok)
+                fileAppender->clearAfterDays(days);
+            else
+                warn(QObject::tr("clearAfter should be digit"));
+        }
+    }
+    return fileAppender;
 }
 
 QSharedPointer<AbstractAppender> LogConfigReader::readConsoleAppender(QDomElement &consoleAppenderElement)
 {
     Q_UNUSED(consoleAppenderElement);
-    QSharedPointer<ConsoleAppender> appender = QSharedPointer<ConsoleAppender>(new ConsoleAppender);
-    return appender.objectCast<AbstractAppender>();
+    return QSharedPointer<AbstractAppender>(new ConsoleAppender);
 }
 
 void LogConfigReader::readLevel(QDomElement &logElement,
@@ -176,4 +206,9 @@ bool LogConfigReader::reportError(const QString &errorString)
     hasError = true;
     this->errorString = errorString;
     return false;
+}
+
+void LogConfigReader::warn(const QString &message)
+{
+    qWarning() << "NestorTheLogger: config error(" << message << ")";
 }

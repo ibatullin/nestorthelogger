@@ -58,3 +58,4 @@ QString LogPattern::replace(LogMessage message)
     output = output.replace(format, dateTime);
     return output;
 }
+

@@ -15,6 +15,8 @@ public:
     QString pattern() const;
     QString replace(LogMessage message);
 
+    bool operator==(LogPattern &p);
+
 private:
     QString m_name;
     QString m_pattern;

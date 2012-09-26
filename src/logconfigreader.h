@@ -18,6 +18,11 @@ public:
     bool read(const QString &fileName);
 
 private:
+    void createPattern(const QString &patternName, const QString &patternString);
+
+    void readPatterns();
+    void readAppenders();
+    void readCategories();
     QSharedPointer<AbstractAppender> readFileAppender(QDomElement &fileAppenderElement);
     QSharedPointer<AbstractAppender> readConsoleAppender(QDomElement &consoleAppenderElement);
     void readLevel(QDomElement &element, const QString &levelName,
@@ -26,7 +31,9 @@ private:
     QSharedPointer<LogPattern> findPattern(const QString &patternName) const;
     QSharedPointer<AbstractAppender> findAppender(const QString &appenderName) const;
     bool reportError(const QString &errorString);
+    void warn(const QString &message);
 
+    QDomElement rootElement;
     bool hasError;
     QString errorString;
     QList<QSharedPointer<LogPattern> > patterns;
