@@ -16,7 +16,8 @@ SOURCES += \
     logger.cpp \
     nullappender.cpp \
     tracer.cpp \
-    fileappender.cpp
+    fileappender.cpp \
+    memoryappender.cpp
 
 HEADERS += \
     logpattern.h \
@@ -31,7 +32,8 @@ HEADERS += \
     logger_p.h \
     nullappender.h \
     tracer.h \
-    fileappender.h
+    fileappender.h \
+    memoryappender.h
 
 
 VER_MAJ = 1
