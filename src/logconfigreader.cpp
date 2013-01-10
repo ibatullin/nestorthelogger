@@ -108,7 +108,7 @@ void LogConfigReader::readCategories()
         if (name.isEmpty())
             continue;
 
-        QSharedPointer<LogCategory> logCategory = QSharedPointer<LogCategory>(new LogCategory(name));
+        QSharedPointer<LogCategory> logCategory(new LogCategory(name));
 
         readLevel(c, "warning", LogMessage::WarningLevel, logCategory);
         readLevel(c, "critical", LogMessage::CriticalLevel, logCategory);

@@ -39,11 +39,11 @@ bool LogManager::setConfig(const QString &fileName)
 
 void LogManager::createCategory(const QString &categoryName, AbstractAppender *appender, const QString &patternString)
 {
-    QSharedPointer<LogPattern> pattern = QSharedPointer<LogPattern>(new LogPattern);
+    QSharedPointer<LogPattern> pattern(new LogPattern);
     pattern->setPattern(patternString);
-    QSharedPointer<AbstractAppender> a = QSharedPointer<AbstractAppender>(appender);
+    QSharedPointer<AbstractAppender> a(appender);
     a->setPattern(pattern);
-    QSharedPointer<LogCategory> category = QSharedPointer<LogCategory>(new LogCategory(categoryName));
+    QSharedPointer<LogCategory> category(new LogCategory(categoryName));
     category->setDefaultAppender(a);
     addLogCategory(category);
 }
