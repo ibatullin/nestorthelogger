@@ -2,4 +2,5 @@ TEMPLATE = subdirs
 
 SUBDIRS += \
     logpattern \
-    logappenders
+    logappenders \
+    logconfigreader

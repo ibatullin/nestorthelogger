@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<logconfig version="1.0">
+    <patterns>
+        <pattern name="default">
+            [%d{hh:mm:ss}] %category %sender -> %text%n
+        </pattern>
+        <pattern name="trace">
+            [%lifetime] %function at line %line %text%n
+        </pattern>
+        <pattern name="error">
+            [%d{hh:mm:ss}] %sender -> (%level) %text%n
+        </pattern>
+    </patterns>
+
+    <appenders>
+        <consoleAppender name="default" pattern="default">
+        </consoleAppender>
+        <consoleAppender name="trace" pattern="trace">
+        </consoleAppender>
+        <consoleAppender name="error" pattern="error">
+        </consoleAppender>
+    </appenders>
+
+    <categories>
+        <category name="default">
+            <default appender="default" />
+            <trace appender="trace" />
+            <warning appender="error" />
+            <critical appender="error" />
+            <fatal appender="error" />
+        </category>
+        <category name="hardware">
+            <default appender="default" />
+        </category>
+   </categories>
+</logconfig>
