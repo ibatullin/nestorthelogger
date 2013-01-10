@@ -51,6 +51,8 @@ bool AbstractAppender::isOpen() const
 void AbstractAppender::write(LogMessage message)
 {
     QMutexLocker locker(&mutex);
+    if (!m_pattern)
+        return;
     QString data = m_pattern->replace(message);
     writeData(data);
 }
