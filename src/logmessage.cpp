@@ -99,17 +99,17 @@ QString LogMessage::levelToString(MessageLevel level)
     {
         switch (level) {
         case DebugLevel:
-            return "D";
+            return "debug";
         case WarningLevel:
-            return "W";
+            return "warning";
         case CriticalLevel:
-            return "C";
+            return "critical";
         case FatalLevel:
-            return "F";
+            return "fatal";
         case LogLevel:
-            return "L";
+            return "log";
         case TraceLevel:
-            return "T";
+            return "trace";
         default:
             return "";
         }

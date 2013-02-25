@@ -26,6 +26,7 @@ LogPatternTest::LogPatternTest()
 
 void LogPatternTest::initTestCase()
 {
+    qApp->setApplicationName("LogPatternTest");
     message.setSender("sender");
     message.setCategoryName("category");
     message.setFunction("test_function()");
@@ -49,6 +50,21 @@ void LogPatternTest::pattern_data()
     QTest::addColumn<QString>("pattern");
     QTest::addColumn<QString>("result");
 
+    QTest::newRow("%{appname}") << QString("%{appname}") << "LogPatternTest";
+    QTest::newRow("%{sender}") << QString("%{sender}") << "sender";
+    QTest::newRow("%{file}") << QString("%{file}") << "sender";
+    QTest::newRow("%{function}") << QString("%{function}") << "test_function()";
+    QTest::newRow("%{line}") << QString("%{line}") << QString::number(30);
+    QTest::newRow("%{message}") << QString("%{message}") << QString("log text");
+    QTest::newRow("%{pid}") << QString("%{pid}") << QString::number(QCoreApplication::applicationPid());
+    QTest::newRow("%{threadid}") << "%{threadid}" << "0x" + QString::number(qlonglong(QThread::currentThread()->currentThread()), 16);
+    QTest::newRow("%{type}") << QString("%{type}") << LogMessage::levelToString(message.level());
+    QTest::newRow("%{category}") << QString("%{category}") << "category";
+
+    QTest::newRow("%{sender}%{message}") << QString("%{sender}%{message}") << QString("senderlog text");
+    QTest::newRow("%%{sender}%%{message}") << QString("%%{sender}%%{message}") << QString("%sender%log text");
+    QTest::newRow("%{message") << QString("%{message") << QString("%{message");
+
     QTest::newRow("only date") << QString("[%d{dd.MM.yyyy}]") << QString("[%1]")
                                   .arg(QDateTime::currentDateTime()
                                        .toString("dd.MM.yyyy"));
@@ -56,25 +72,8 @@ void LogPatternTest::pattern_data()
     QTest::newRow("datetime") << QString("%d{dd.MM.yyyy hh:mm}") << QString("%1")
                                   .arg(QDateTime::currentDateTime()
                                        .toString("dd.MM.yyyy hh:mm"));
-
-    QTest::newRow("only text") << QString("%text") << message.text();
-    QTest::newRow("text and end line") << QString("%text%n") << message.text() + "\n";
-    QTest::newRow("marker") << QString("%sendera%text%")
-                                << QString("%1a%2%")
-                                   .arg(message.sender())
-                                   .arg(message.text());
-    QTest::newRow("full") << QString("[%d{dd.MM.yyyy hh}] -> %sender(%function at line %line) [%category:%level] %text%n")
-                          << QString("[%1] -> %2(%3 at line %4) [%5:%6] %7\n")
-                             .arg(QDateTime::currentDateTime()
-                                  .toString("dd.MM.yyyy hh"))
-                             .arg(message.sender())
-                             .arg(message.function())
-                             .arg(message.lineNumber())
-                             .arg(message.categoryName())
-                             .arg(LogMessage::levelToString(message.level()))
-                             .arg(message.text());
 }
 
-QTEST_APPLESS_MAIN(LogPatternTest)
+QTEST_MAIN(LogPatternTest)
 
 #include "tst_logpatterntest.moc"
