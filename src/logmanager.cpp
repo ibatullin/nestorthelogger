@@ -103,7 +103,7 @@ void LogManager::disableMessageHandler()
 {
     qDebug() << "Message handler restored.";
 #if QT_VERSION >= 0x050000
-    qInstallMessageHandler(logMessageHandler);
+    qInstallMessageHandler(0);
 #else
     qInstallMsgHandler(0);
 #endif
