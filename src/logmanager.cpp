@@ -23,7 +23,7 @@ LogManager::LogManager() :
     d_ptr(new LogManagerPrivate)
 {
     enableMessageHandler();
-    createCategory("default", new ConsoleAppender, "%text%n");
+    createCategory("default", new ConsoleAppender, "%{message}");
 }
 
 LogManager::~LogManager()

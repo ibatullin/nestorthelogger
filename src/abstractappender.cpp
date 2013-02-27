@@ -53,7 +53,7 @@ void AbstractAppender::write(LogMessage message)
     QMutexLocker locker(&mutex);
     if (!m_pattern)
         return;
-    QString data = m_pattern->replace(message);
+    QString data = m_pattern->replace(message) + '\n';
     writeData(data);
 }
 
