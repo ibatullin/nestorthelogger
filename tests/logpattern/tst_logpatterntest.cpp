@@ -1,6 +1,7 @@
 #include <QString>
 #include <QtTest>
 
+#include "logmanager.h"
 #include "logpattern.h"
 
 class LogPatternTest : public QObject
@@ -26,6 +27,7 @@ LogPatternTest::LogPatternTest()
 
 void LogPatternTest::initTestCase()
 {
+    LogManager::instance()->disableMessageHandler();
     qApp->setApplicationName("LogPatternTest");
     message.setSender("sender");
     message.setCategoryName("category");
@@ -42,7 +44,6 @@ void LogPatternTest::pattern()
 
     logPattern.setPattern(pattern);
     QCOMPARE(logPattern.replace(message), result);
-    QVERIFY2(true, "Failure");
 }
 
 void LogPatternTest::pattern_data()
@@ -65,13 +66,13 @@ void LogPatternTest::pattern_data()
     QTest::newRow("%%{sender}%%{message}") << QString("%%{sender}%%{message}") << QString("%sender%log text");
     QTest::newRow("%{message") << QString("%{message") << QString("%{message");
 
-    QTest::newRow("only date") << QString("[%d{dd.MM.yyyy}]") << QString("[%1]")
-                                  .arg(QDateTime::currentDateTime()
-                                       .toString("dd.MM.yyyy"));
+    qWarning() << "The test is time dependent!";
+    QTest::newRow("%{date}") << QString("%{date}") << QDate::currentDate().toString("yyyy-MM-dd");
+    QTest::newRow("%{time}") << QString("%{time}") << QTime::currentTime().toString("hh:mm:ss");
+    QTest::newRow("%{datetime}") << QString("%{datetime}") <<  QDateTime::currentDateTime().toString("yyyy-MM-ddThh:mm:ss");
+    QTest::newRow("%{textdate}") << QString("%{textdate}") <<  QDateTime::currentDateTime().toString("ddd MMM dd hh:mm:ss yyyy");
+    QTest::newRow("%{utc}") << QString("%{utc}") <<  QDateTime::currentDateTimeUtc().toString("yyyy-MM-ddThh:mm:ssZ");
 
-    QTest::newRow("datetime") << QString("%d{dd.MM.yyyy hh:mm}") << QString("%1")
-                                  .arg(QDateTime::currentDateTime()
-                                       .toString("dd.MM.yyyy hh:mm"));
 }
 
 QTEST_MAIN(LogPatternTest)

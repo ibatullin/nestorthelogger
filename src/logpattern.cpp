@@ -49,20 +49,12 @@ QString LogPattern::replace(LogMessage message)
     output = output.replace("%{type}", LogMessage::levelToString(message.level()));
     output = output.replace("%{category}", message.categoryName());
     output = output.replace("%{lifetime}", LogManager::instance()->lifetime());
+    output = output.replace("%{date}", QDate::currentDate().toString(Qt::ISODate));
+    output = output.replace("%{time}", QTime::currentTime().toString(Qt::ISODate));
+    output = output.replace("%{datetime}", QDateTime::currentDateTime().toString(Qt::ISODate));
+    output = output.replace("%{textdate}", QDateTime::currentDateTime().toString(Qt::TextDate));
+    output = output.replace("%{utc}", QDateTime::currentDateTimeUtc().toString(Qt::ISODate));
 
-    QString datePattern = "%d{";
-    int datePatternSize = datePattern.size();
-
-    int startPos = output.indexOf(datePattern);
-    int endPos = output.indexOf("}", startPos + 1);
-    if (startPos == -1 && endPos == -1)
-        return output;
-
-    QString format = output.mid(startPos + datePatternSize, endPos - startPos - datePatternSize);
-    output.remove(endPos, 1);
-    output.remove(startPos, datePatternSize);
-    QString dateTime = message.dateTime().toString(format);
-    output = output.replace(format, dateTime);
     return output;
 }
 
