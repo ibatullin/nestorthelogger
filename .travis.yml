@@ -3,6 +3,5 @@ before_install:
   - sudo apt-get install libqt4-dev qt4-qmake
   
 script:
- - qmake -project
  - qmake nestorthelogger.pro
  - make
