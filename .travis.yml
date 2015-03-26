@@ -1,0 +1,22 @@
+language: cpp
+
+matrix:
+  include:
+    - compiler: gcc
+      env: CONFIG=debug QT=qt5
+    - compiler: gcc
+      env: CONFIG=release QT=qt5
+    - compiler: gcc
+      env: CONFIG=release QT=qt4
+    - compiler: clang
+      env: CONFIG=release QT=qt5 QMAKESPEC=linux-clang
+
+before_install:
+  - sh -c "if [ '$QT' = 'qt4' ]; then sudo apt-get update -qq; sudo apt-get install -qq libqt4-dev qt4-qmake; fi"
+  - sh -c "if [ '$QT' = 'qt5' ]; then sudo add-apt-repository --yes ppa:ubuntu-sdk-team/ppa; sudo apt-get update -qq; sudo apt-get install -qq qtbase5-dev qt5-default qttools5-dev-tools; fi"
+  - qmake -version
+script:
+  - qmake CONFIG+=$CONFIG nestorthelogger.pro
+  - make
+  - export LD_LIBRARY_PATH="$PWD/bin/lib:$LD_LIBRARY_PATH"
+  - sh -c "cd tests && qmake tests.pro && make && make check"
